@@ -7,7 +7,6 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd \"C:Users\alexw\OneDrive\Documents\AlexW Code\Full-Stack-Answers\Part2\notes2\build\" && npm run build --prod && cp -r \"C:Users\alexw\OneDrive\Documents\AlexW Code\Full-Stack-Answers\Part2\notes2\build\" \"C:Users\alexw\OneDrive\Documents\AlexW Code\notes\"",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
     "logs:prod": "heroku logs --tail"

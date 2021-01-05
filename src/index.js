@@ -1,3 +1,7 @@
+//not parsing json bc of this wrongly formatted script, not sure how to fix it so it does also what i want on the cli
+//"build:ui": "rm -rf build && cd \"C:Users\alexw\OneDrive\Documents\AlexW Code\Full-Stack-Answers\Part2\notes2\build\" 
+//&& npm run build --prod && cp -r \"C:Users\alexw\OneDrive\Documents\AlexW Code\Full-Stack-Answers\Part2\notes2\build\" \"C:Users\alexw\OneDrive\Documents\AlexW Code\notes\"",
+
 const express = require('express')
 const app = express()
 
