@@ -1,5 +1,5 @@
 {
-  "name": "nots",
+  "name": "note",
   "version": "0.0.1",
   "description": "notes using express and node instead of axios and json server",
   "main": "index.js",

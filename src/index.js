@@ -4,21 +4,9 @@ const app = express()
 const cors = require('cors')
 app.use(cors)
 
+
 app.use(express.json())
-
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
-
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(requestLogger)
+app.use(express.static('build')) //use our minifed frontend html and js
 
 let notes = [
   {
@@ -94,11 +82,9 @@ app.delete('/api/notes/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.use(unknownEndpoint)
-
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-console.log('hello')
+console.log('hello') //this runs first bc all the other functions are delegated to web api stack and then put to callback queue
