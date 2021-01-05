@@ -2,11 +2,13 @@ const express = require('express')
 const app = express()
 
 const cors = require('cors')
-app.use(cors)
 
-
+app.use(cors())
 app.use(express.json())
-app.use(express.static('build')) //use our minifed frontend html and js
+app.use(express.static('build')) //when receiving a get request express will check build directory to see if there is a html file to correspond with the request 
+//so going to root address or the /index.html will use the file in build dir
+
+//dont have backend code supporting updating/put... no wonder the error codes
 
 let notes = [
   {
@@ -30,7 +32,7 @@ let notes = [
 ]
 
 app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>')
+  res.send('<h1>Hello World, visit /api/notes for more </h1>')
 })
 
 app.get('/api/notes', (req, res) => {
@@ -83,8 +85,9 @@ app.delete('/api/notes/:id', (request, response) => {
 })
 
 const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-console.log('hello') //this runs first bc all the other functions are delegated to web api stack and then put to callback queue
+
