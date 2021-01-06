@@ -1,0 +1,14 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+    "content": "json is usually translated to string form",
+    "important": false
+}
+
+### doesnt work bc in mongo our id is much more complex
+GET http://localhost:3001/api/notes/2 
+
+
+
+#
