@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI
-const password = process.argv[2]
+const url = process.env.MONGODB_URI //heroku config not defining this
 
 
 console.log('Connecting to ', url)
