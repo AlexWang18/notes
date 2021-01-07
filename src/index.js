@@ -1,4 +1,4 @@
-//Our backend, no support for deleting or updating / put yet
+//Our backend, no support for deleting or updating / put yet, why do i need to run this program in order for my heroku app to work
 
 require('dotenv').config()
 
@@ -25,14 +25,8 @@ app.get('/api/notes', (req, res) => {
   })
 })
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   const body = request.body
-
-  if (!body.content) {
-    return response.status(400).json({
-      error: 'content missing'
-    })
-  }
 
   const note = new Note({
     content: body.content,
@@ -40,10 +34,12 @@ app.post('/api/notes', (request, response) => {
     date: new Date()
   })
 
-  note.save().then(savedNote => { //use the models methods
-    response.json(savedNote)
-  })
-
+  note.save()
+    .then(savedNote => savedNote.toJSON()) //explictly call to JSON and promise chain
+    .then(formattedNote => {
+      response.json(formattedNote)
+    })
+    .catch(err => next(err))
 
 })
 
@@ -52,7 +48,7 @@ app.get('/api/notes/:id', (request, response) => {
 
   Note.findById(request.params.id).then(foundNote => {
     if (foundNote) {
-      response.json(foundNote)
+      response.json(foundNote.toJSON()) //bson to json
     } else {
       response.status(404).end()
     }
@@ -94,6 +90,9 @@ const errorHandler = (error, req, res, next) => {
 
   if (error.name === 'CastError') {
     return res.status(400).send({ error: 'malformed id' })
+  }
+  else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message })
   }
 
   next(error) //pass to default express error handler
