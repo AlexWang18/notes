@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/notes', (req, res) => {
-  Note.find({}).then(n => {
+  Note.find({}).then(n => { //fetch all documents from the mongo collection
     res.json(n)
   })
 })
