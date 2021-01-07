@@ -6,9 +6,18 @@ Content-Type: application/json
     "important": false
 }
 
-### doesnt work bc in mongo our id is much more complex
-GET http://localhost:3001/api/notes/2 
+### doesnt work bc in mongo our id is much more complex, i tried 21 and could not parse 21 string into object id for some reason
+GET http://localhost:3001/api/notes/215352636747 
 
+###
+GET http://localhost:3001/api/notes
 
+###
 
-#
+PUT http://localhost:3001/api/notes/5ff722cf0e9a4e16f47330a8
+Content-Type: application/json
+
+{
+    "content": "i am updating this note",
+    "important": true
+}
