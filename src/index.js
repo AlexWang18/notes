@@ -1,6 +1,7 @@
-//Our backend, no support for deleting or updating / put yet, why do i need to run this program in order for my heroku app to work
 
-require('dotenv').config()
+if(process.env.NODE_ENV !== 'production'){
+  require('dotenv').config()
+}
 
 
 const Note = require('./models/note')
