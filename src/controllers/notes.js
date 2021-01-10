@@ -4,13 +4,15 @@ const noteRouter = require('express').Router();
 // eslint-disable-next-line no-useless-escape
 const Note = require('C:/Users/alexw/OneDrive/Documents/AlexW Code/notes/src/models/note.js');
 
-noteRouter.get('/', (req, res) => {
-  Note.find({}).then((n) => { // fetch all documents from the mongo collection
-    res.json(n);
-  });
+noteRouter.get('/', async (req, res) => {
+  const notes = await Note.find({});
+  res.json(notes);
 });
+/*   Note.find({}).then((n) => { // fetch all documents from the mongo collection
+   res.json(n);
+ }); */
 
-noteRouter.post('/', (request, response, next) => {
+noteRouter.post('/', async (request, response) => {
   const { body } = request;
 
   const note = new Note({
@@ -18,47 +20,41 @@ noteRouter.post('/', (request, response, next) => {
     important: body.important || false,
     date: new Date(),
   });
-
-  note.save()
-    .then((savedNote) => savedNote.toJSON()) // explictly call to JSON and promise chain
-    .then((formattedNote) => {
-      response.json(formattedNote);
-    })
-    .catch((err) => next(err));
+  const savedNote = await note.save();
+  response.json(savedNote);
+  /*  note.save()
+      .then((savedNote) => savedNote.toJSON()) // explictly call to JSON and promise chain
+      .then((formattedNote) => {
+        response.json(formattedNote);
+      })
+      .catch((err) => next(err)); */
 });
 
-noteRouter.get('/:id', (request, response, next) => {
+noteRouter.get('/:id', async (request, response) => {
   console.log(request.params.id);
 
-  Note.findById(request.params.id).then((foundNote) => {
-    if (foundNote) {
-      response.json(foundNote.toJSON()); // bson to json
-    } else {
-      response.status(404).end();
-    }
-  }).catch((err) => next(err)); // delegeate to middleware
+  const foundNote = await Note.findById(request.params.id);
+  if (foundNote) response.json(foundNote.toJSON()); // bson to json
+  else {
+    response.status(404).end();
+  }
 });
 
-noteRouter.delete('/:id', (request, response, next) => {
-  Note.findByIdAndDelete(request.params.id).then((result) => {
-    response.status(204).end();
-  })
-    .catch((err) => next(err));
+noteRouter.delete('/:id', async (request, response) => {
+  await Note.findByIdAndDelete(request.params.id);
+  response.status(204).end();
 });
 
-noteRouter.put('/:id', (req, res) => {
+noteRouter.put('/:id', async (req, res) => {
   const { body } = req;
   const note = {
     content: body.content,
     important: body.important,
   };
 
-  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+  const updatedNote = await Note.findByIdAndUpdate(req.params.id, note, { new: true });
   // use optional 3rd parameter to force mongoose to call the modified doucment of our schema
-    .then((updatedNote) => {
-      res.json(updatedNote.toJSON());
-    })
-    .catch((err) => next(err));
+  res.json(updatedNote.toJSON);
 });
 
 module.exports = noteRouter;

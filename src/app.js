@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors'); // handles everything under the hood elimates the need for try catch blocks when handling errors using await
 const config = require('./utils/config');
 
 const app = express();
@@ -14,7 +15,7 @@ const mongoose = require('mongoose');
 logger.info('connecting to', config.MONGODB_URI);
 
 mongoose.connect(config.MONGODB_URI, {
-  useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
+  useNewUrlParser: true, useUnifiedTopology: false, useFindAndModify: false, useCreateIndex: true,
 })
   .then(() => {
     logger.info('connected to MongoDB');
