@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 const Note = require('../models/note');
+const User = require('../models/user');
 
 const initialNotes = [
     {
@@ -28,6 +29,11 @@ const getNotesInDB = async () => {
     return notes.map((n) => n.toJSON());
 };
 
+const getUsersInDB = async () => {
+  const users = await User.find({});
+  return users.map((u) => u.toJSON());
+};
+
 module.exports = {
-    initialNotes, nonExistingId, getNotesInDB,
+    initialNotes, nonExistingId, getNotesInDB, getUsersInDB,
 };

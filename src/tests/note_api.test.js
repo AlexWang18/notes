@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-undef */
 /* eslint-disable semi */
 const mongoose = require('mongoose')
@@ -6,7 +7,7 @@ const app = require('../app')
 
 const api = supertest(app) // wrap express server into a superagent object
 
-const { initialNotes, nonExistingNote, getNotesInDB } = require('./test_helper')
+const { initialNotes, nonExistingId, getNotesInDB } = require('./test_helper')
 const Note = require('../models/note')
 
 beforeEach(async () => { // keep same inital state of our mongo collection
@@ -18,17 +19,70 @@ beforeEach(async () => { // keep same inital state of our mongo collection
   // transform our array of promises into a single one, and wait for it to finish, executes the promises in paralell
 })
 
-describe('testing database', () => {
-  test('notes are returned as json', async () => { // announces that the code is async
+describe('when there is initially some notes saved', () => {
+  test('notes are returned as json', async () => {
     await api
       .get('/api/notes')
       .expect(200)
-      .expect('Content-Type', /application\/json/) // regex / /  plus \ to escape only bc not in string literal
+      .expect('Content-Type', /application\/json/)
   })
 
-  test('a valid note can be added', async () => {
+  test('all notes are returned', async () => {
+    const response = await api.get('/api/notes')
+
+    expect(response.body).toHaveLength(initialNotes.length)
+  })
+
+  test('a specific note is within the returned notes', async () => {
+    const response = await api.get('/api/notes')
+
+    const contents = response.body.map((r) => r.content)
+
+    expect(contents).toContain(
+      'Browser can execute only Javascript',
+    )
+  })
+})
+
+describe('viewing a specific note', () => {
+  test('succeeds with a valid id', async () => {
+    const notesAtStart = await getNotesInDB()
+
+    const noteToView = notesAtStart[0]
+
+    const resultNote = await api
+      .get(`/api/notes/${noteToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const processedNoteToView = JSON.parse(JSON.stringify(noteToView))
+
+    expect(resultNote.body).toEqual(processedNoteToView)
+  })
+
+  test('fails with statuscode 404 if note does not exist', async () => {
+    const validNonexistingId = await nonExistingId()
+
+    console.log(validNonexistingId)
+
+    await api
+      .get(`/api/notes/${validNonexistingId}`)
+      .expect(404)
+  })
+
+  test('fails with statuscode 400 id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api
+      .get(`/api/notes/${invalidId}`)
+      .expect(400)
+  })
+})
+
+describe('addition of a new note', () => {
+  test('succeeds with valid data', async () => {
     const newNote = {
-      content: 'async/await simplifies making async calls in a way that looks sync',
+      content: 'async/await simplifies making async calls',
       important: true,
     }
 
@@ -41,13 +95,15 @@ describe('testing database', () => {
     const notesAtEnd = await getNotesInDB()
     expect(notesAtEnd).toHaveLength(initialNotes.length + 1)
 
-    const contents = notesAtEnd.map((r) => r.content)
-    expect(contents).toContain(newNote.content)
+    const contents = notesAtEnd.map((n) => n.content)
+    expect(contents).toContain(
+      'async/await simplifies making async calls',
+    )
   })
 
-  test('an invalid note is not added', async () => {
+  test('fails with status code 400 if data invaild', async () => {
     const newNote = {
-      important: false,
+      important: true,
     }
 
     await api
@@ -56,24 +112,13 @@ describe('testing database', () => {
       .expect(400)
 
     const notesAtEnd = await getNotesInDB()
+
     expect(notesAtEnd).toHaveLength(initialNotes.length)
   })
+})
 
-  test('a specific note can be viewed', async () => {
-    const notesAtStart = await getNotesInDB()
-
-    const notesToView = notesAtStart[0]
-
-    const resultNote = await api
-      .get(`/api/notes/${notesToView.id}`)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-
-    const processedNoteToView = JSON.parse(JSON.stringify(notesToView))
-    expect(resultNote.body).toEqual(processedNoteToView)
-  })
-
-  test('a note can be deleted', async () => {
+describe('deletion of a note', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
     const notesAtStart = await getNotesInDB()
     const noteToDelete = notesAtStart[0]
 
@@ -82,14 +127,17 @@ describe('testing database', () => {
       .expect(204)
 
     const notesAtEnd = await getNotesInDB()
-    expect(notesAtEnd).toHaveLength(initialNotes.length - 1)
+
+    expect(notesAtEnd).toHaveLength(
+      initialNotes.length - 1,
+    )
 
     const contents = notesAtEnd.map((r) => r.content)
+
     expect(contents).not.toContain(noteToDelete.content)
   })
 })
 
-afterAll((done) => {
+afterAll(() => {
   mongoose.connection.close()
-  done()
 })
