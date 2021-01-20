@@ -1,33 +1,30 @@
-// dedicated module for route handling
-
 const noteRouter = require('express').Router();
 // eslint-disable-next-line no-useless-escape
+const User = require('../models/user');
 const Note = require('C:/Users/alexw/OneDrive/Documents/AlexW Code/notes/src/models/note.js');
 
 noteRouter.get('/', async (req, res) => {
-  const notes = await Note.find({});
+  const notes = await Note.find({})
+    .populate('user', { username: 1, name: 1 }); // only works bc of the refs in the schema's fields definition
   res.json(notes);
 });
-/*   Note.find({}).then((n) => { // fetch all documents from the mongo collection
-   res.json(n);
- }); */
 
 noteRouter.post('/', async (request, response) => {
   const { body } = request;
+
+  const user = await User.findById(body.userId);
 
   const note = new Note({
     content: body.content,
     important: body.important || false,
     date: new Date(),
+    user: user._id,
   });
+
   const savedNote = await note.save();
+  user.notes = user.notes.concat(savedNote._id); // add to the users notes property
+  await user.save();
   response.json(savedNote);
-  /*  note.save()
-      .then((savedNote) => savedNote.toJSON()) // explictly call to JSON and promise chain
-      .then((formattedNote) => {
-        response.json(formattedNote);
-      })
-      .catch((err) => next(err)); */
 });
 
 noteRouter.get('/:id', async (request, response) => {

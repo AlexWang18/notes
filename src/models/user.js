@@ -1,9 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable-next-line no-param-reassign */
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    unique: true,
+  },
   name: String,
   passwordHash: String,
   notes: [
@@ -13,6 +17,8 @@ const userSchema = mongoose.Schema({
     },
   ],
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
   transform: (doucment, returnedObj) => {

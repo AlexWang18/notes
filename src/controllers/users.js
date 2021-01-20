@@ -16,4 +16,10 @@ usersRouter.post('/', async (req, res) => {
   res.json(savedUser);
 });
 
+usersRouter.get('/', async (req, res) => {
+  const users = await User.find({})
+    .populate('notes', { content: 1, date: 1 }); // same thing as transactional join query in relational dbs, gets the referenced docs in that field, second param specify which fields
+  res.json(users);
+});
+
 module.exports = usersRouter;

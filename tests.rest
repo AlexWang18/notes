@@ -21,3 +21,19 @@ Content-Type: application/json
     "content": "i am updating this note",
     "important": true
 }
+
+###
+
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username": "alexw18",
+    "name": "alex",
+    "password": "reactIsOk",
+    "notes": []
+}
+
+###
+
+GET http://localhost:3001/api/users
