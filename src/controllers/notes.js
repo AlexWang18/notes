@@ -1,7 +1,7 @@
 const noteRouter = require('express').Router();
 // eslint-disable-next-line no-useless-escape
 const User = require('../models/user');
-const Note = require('C:/Users/alexw/OneDrive/Documents/AlexW Code/notes/src/models/note.js');
+const Note = require('../models/note');
 
 noteRouter.get('/', async (req, res) => {
   const notes = await Note.find({})
