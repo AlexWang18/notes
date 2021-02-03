@@ -10,9 +10,11 @@ usersRouter.post('/', async (req, res) => {
   const user = new User({
     username: body.username,
     name: body.name,
-    password: passwordHash,
+    passwordHash: passwordHash
   });
-  const savedUser = await user.save();
+
+  const savedUser = await user.save(); // add to DB
+
   res.json(savedUser);
 });
 

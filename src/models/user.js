@@ -21,11 +21,11 @@ const userSchema = mongoose.Schema({
 userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
-  transform: (doucment, returnedObj) => {
+  transform: (document, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
     delete returnedObj._id;
     delete returnedObj.__v;
-    delete returnedObj.passwordHash;
+   // delete returnedObj.passwordHash; hash is not being stored in db as result
   },
 });
 
