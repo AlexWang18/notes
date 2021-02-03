@@ -25,7 +25,7 @@ userSchema.set('toJSON', {
     returnedObj.id = returnedObj._id.toString();
     delete returnedObj._id;
     delete returnedObj.__v;
-   // delete returnedObj.passwordHash; hash is not being stored in db as result
+    delete returnedObj.passwordHash; 
   },
 });
 

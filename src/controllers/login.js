@@ -19,14 +19,15 @@ loginRouter.post("/", async (req, res) => {
       error: "Invalid username or password",
     });
   }
+  
   const userForToken = {
     username: user.username,
     id: user._id,
   };
 
   const token = jwt.sign(userForToken, process.env.SECRET); // send back the users token
-
-  res.status(200).send({ token, username: user.username, name: username });
+  
+  res.status(200).send({ token: token, username: user.username, name: user.name });
 });
 
 module.exports = loginRouter;
